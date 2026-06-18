@@ -1,0 +1,31 @@
+{
+  // Cloudflare Workers 設定（無料版・Pages 不使用）
+  // 1つの Worker で「静的フロントエンド配信」と「シグナリング用 Durable Object」を同梱する。
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "voip",
+  "main": "src/index.js",
+  "compatibility_date": "2026-06-01",
+
+  // 静的アセット（index.html / app.js / styles.css）を無料・無制限で配信
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application"
+  },
+
+  // WebRTC シグナリング用 Durable Object
+  "durable_objects": {
+    "bindings": [
+      { "name": "SIGNALING", "class_name": "SignalingRoom" }
+    ]
+  },
+
+  // 無料版では SQLite-backed Durable Object が必須（new_classes ではなく new_sqlite_classes）
+  "migrations": [
+    { "tag": "v1", "new_sqlite_classes": ["SignalingRoom"] }
+  ],
+
+  "observability": {
+    "enabled": true
+  }
+}

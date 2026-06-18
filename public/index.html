@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>VADER CALL — ビデオチャット</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <!-- ロビー画面 -->
+    <section id="lobby" class="screen">
+      <div class="lobby-card">
+        <h1 class="logo">VADER<span>CALL</span></h1>
+        <p class="tagline">暗黒面へようこそ。合言葉で接続せよ。</p>
+        <form id="join-form" autocomplete="off">
+          <label class="field">
+            <span>あなたの名前</span>
+            <input
+              id="name-input"
+              type="text"
+              maxlength="32"
+              placeholder="例: ダース"
+              required
+            />
+          </label>
+          <label class="field">
+            <span>合言葉（ルームID）</span>
+            <input
+              id="room-input"
+              type="text"
+              maxlength="64"
+              placeholder="例: death-star-01"
+              required
+            />
+          </label>
+          <button type="submit" id="join-btn" class="primary-btn">
+            入室する
+          </button>
+        </form>
+        <p id="lobby-error" class="error" hidden></p>
+        <p class="hint">同じ合言葉を入力した相手とつながります（最大4人）</p>
+      </div>
+    </section>
+
+    <!-- 通話画面 -->
+    <section id="call" class="screen" hidden>
+      <header class="call-header">
+        <span class="room-badge">⚔ <span id="room-label"></span></span>
+        <span id="status" class="status">接続中…</span>
+      </header>
+
+      <div id="grid" class="grid count-1"></div>
+
+      <footer class="controls">
+        <button id="mic-btn" class="ctrl-btn" title="マイク">
+          <span class="icon">🎤</span>
+        </button>
+        <button id="cam-btn" class="ctrl-btn" title="カメラ">
+          <span class="icon">📷</span>
+        </button>
+        <button id="leave-btn" class="ctrl-btn danger" title="退室">
+          <span class="icon">✕</span>
+        </button>
+      </footer>
+    </section>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

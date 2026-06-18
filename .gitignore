@@ -1,0 +1,14 @@
+# 依存関係
+node_modules/
+
+# Wrangler のローカル状態・ビルド成果物
+.wrangler/
+dist/
+
+# 環境変数・シークレット
+.dev.vars
+.env
+
+# OS / エディタ
+.DS_Store
+*.log

@@ -1,0 +1,14 @@
+{
+  "name": "voip",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ダースベーダー風テーマのシンプルなビデオチャット（Cloudflare Workers 無料版）",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "start": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

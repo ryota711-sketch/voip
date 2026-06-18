@@ -1,0 +1,306 @@
+/* =========================================================
+   VADER CALL — ダースベーダー風テーマ
+   黒基調 + シスレッド(#e30613) + 赤いグロー
+   全画面ノンスクロール / PC・タブレット・スマホ対応
+   ========================================================= */
+
+:root {
+  --bg: #050507;
+  --panel: #0e0e12;
+  --panel-2: #16161c;
+  --red: #e30613;
+  --red-bright: #ff2d3a;
+  --red-glow: rgba(227, 6, 19, 0.55);
+  --text: #e8e8ee;
+  --muted: #8a8a96;
+  --border: #2a2a33;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden; /* スクロール禁止 */
+}
+
+body {
+  font-family: "Segoe UI", "Hiragino Kaku Gothic ProN", "Noto Sans JP",
+    system-ui, sans-serif;
+  background:
+    radial-gradient(circle at 50% -10%, rgba(227, 6, 19, 0.12), transparent 55%),
+    var(--bg);
+  color: var(--text);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.screen {
+  position: fixed;
+  inset: 0;
+  height: 100dvh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+/* ---------------- ロビー画面 ---------------- */
+
+#lobby {
+  align-items: center;
+  justify-content: center;
+  padding: env(safe-area-inset-top) 20px env(safe-area-inset-bottom);
+}
+
+.lobby-card {
+  width: min(420px, 92vw);
+  background: linear-gradient(180deg, var(--panel), var(--panel-2));
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 32px 28px;
+  box-shadow: 0 0 0 1px rgba(227, 6, 19, 0.15),
+    0 24px 60px rgba(0, 0, 0, 0.7), 0 0 80px rgba(227, 6, 19, 0.08);
+  text-align: center;
+}
+
+.logo {
+  font-size: clamp(34px, 9vw, 48px);
+  font-weight: 900;
+  letter-spacing: 4px;
+  margin: 0 0 6px;
+  color: var(--text);
+  text-shadow: 0 0 18px var(--red-glow);
+}
+.logo span {
+  color: var(--red-bright);
+  text-shadow: 0 0 22px var(--red-glow);
+}
+
+.tagline {
+  color: var(--muted);
+  margin: 0 0 26px;
+  font-size: 14px;
+}
+
+.field {
+  display: block;
+  text-align: left;
+  margin-bottom: 16px;
+}
+.field span {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+}
+
+.field input {
+  width: 100%;
+  padding: 13px 14px;
+  background: #0a0a0e;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 16px; /* iOS のズーム防止 */
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.field input:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(227, 6, 19, 0.18);
+}
+
+.primary-btn {
+  width: 100%;
+  margin-top: 6px;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #fff;
+  background: linear-gradient(180deg, var(--red-bright), var(--red));
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  box-shadow: 0 0 24px var(--red-glow);
+  transition: transform 0.08s, box-shadow 0.15s, filter 0.15s;
+}
+.primary-btn:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 0 34px var(--red-glow);
+}
+.primary-btn:active {
+  transform: translateY(1px);
+}
+.primary-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.hint {
+  color: var(--muted);
+  font-size: 12px;
+  margin: 18px 0 0;
+}
+
+.error {
+  color: var(--red-bright);
+  font-size: 13px;
+  margin: 14px 0 0;
+}
+
+/* ---------------- 通話画面 ---------------- */
+
+.call-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(env(safe-area-inset-top) + 10px) 16px 10px;
+  gap: 12px;
+}
+.room-badge {
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--text);
+  text-shadow: 0 0 12px var(--red-glow);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.status {
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+/* ビデオグリッド：人数に応じてレイアウト切替（スクロールしない） */
+.grid {
+  flex: 1 1 auto;
+  display: grid;
+  gap: 10px;
+  padding: 0 12px;
+  min-height: 0; /* グリッドが親をはみ出さない */
+}
+.grid.count-1 {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
+.grid.count-2 {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+.grid.count-3,
+.grid.count-4 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+/* PC・タブレット（横長）では2人を左右並びに */
+@media (min-width: 700px) and (orientation: landscape) {
+  .grid.count-2 {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+  }
+  .grid.count-3 {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: 1fr;
+  }
+}
+
+.tile {
+  position: relative;
+  background: #000;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  min-height: 0;
+  box-shadow: inset 0 0 0 1px rgba(227, 6, 19, 0.1),
+    0 0 22px rgba(0, 0, 0, 0.6);
+}
+.tile video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #000;
+  display: block;
+}
+.tile.local video {
+  transform: scaleX(-1); /* 自分の映像は鏡像に */
+}
+.tile .name {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(227, 6, 19, 0.5);
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
+  max-width: 70%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tile.muted::after {
+  content: "🔇";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+/* ---------------- コントロールバー ---------------- */
+
+.controls {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 14px 16px calc(env(safe-area-inset-bottom) + 14px);
+}
+
+.ctrl-btn {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  color: var(--text);
+  font-size: 22px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.08s, box-shadow 0.15s, border-color 0.15s;
+}
+.ctrl-btn:hover {
+  border-color: var(--red);
+  box-shadow: 0 0 18px var(--red-glow);
+}
+.ctrl-btn:active {
+  transform: translateY(1px);
+}
+/* オフ状態（ミュート / カメラ停止）は赤く点灯 */
+.ctrl-btn.off {
+  background: linear-gradient(180deg, var(--red-bright), var(--red));
+  border-color: var(--red);
+  box-shadow: 0 0 22px var(--red-glow);
+}
+.ctrl-btn.danger {
+  background: linear-gradient(180deg, var(--red-bright), var(--red));
+  border-color: var(--red);
+  box-shadow: 0 0 22px var(--red-glow);
+}
