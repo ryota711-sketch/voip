@@ -28,20 +28,33 @@
           </label>
           <label class="field">
             <span>合言葉（ルームID）</span>
-            <input
-              id="room-input"
-              type="text"
-              maxlength="64"
-              placeholder="例: death-star-01"
-              required
-            />
+            <div class="room-row">
+              <input
+                id="room-input"
+                type="text"
+                maxlength="64"
+                placeholder="例: death-star-01"
+                required
+              />
+              <button
+                type="button"
+                id="gen-room-btn"
+                class="ghost-btn"
+                title="推測されにくい合言葉を生成"
+              >
+                生成
+              </button>
+            </div>
           </label>
           <button type="submit" id="join-btn" class="primary-btn">
             入室する
           </button>
         </form>
         <p id="lobby-error" class="error" hidden></p>
-        <p class="hint">同じ合言葉を入力した相手とつながります（最大4人）</p>
+        <p class="hint">
+          同じ合言葉を入力した相手とつながります（最大4人）。<br />
+          合言葉は推測されにくいものにし、相手にだけ共有してください。
+        </p>
       </div>
     </section>
 

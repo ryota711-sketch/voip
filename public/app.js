@@ -37,12 +37,24 @@ const statusEl = document.getElementById("status");
 const micBtn = document.getElementById("mic-btn");
 const camBtn = document.getElementById("cam-btn");
 const leaveBtn = document.getElementById("leave-btn");
+const genRoomBtn = document.getElementById("gen-room-btn");
 
 let currentRoom = "";
 
-// ランダムな peerId を生成
-function genId() {
-  return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+// 推測されにくいランダムなルームIDを生成（盗聴・総当たり対策）
+function genRoomId() {
+  const bytes = new Uint8Array(12);
+  crypto.getRandomValues(bytes);
+  const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+  // 読みやすいよう 4 文字ごとに区切る（例: 1a2b-3c4d-5e6f-...）
+  return hex.match(/.{1,4}/g).join("-");
+}
+
+// 「合言葉を生成」ボタン
+if (genRoomBtn) {
+  genRoomBtn.addEventListener("click", () => {
+    roomInput.value = genRoomId();
+  });
 }
 
 // ---- ロビー：入室処理 ----
@@ -69,7 +81,7 @@ joinForm.addEventListener("submit", async (e) => {
     return;
   }
 
-  myPeerId = genId();
+  // peerId はサーバーが発行する（welcome メッセージで受け取る）
   enterCallScreen();
   connectSignaling();
 });
@@ -87,7 +99,8 @@ function enterCallScreen() {
   lobby.hidden = true;
   call.hidden = false;
   roomLabel.textContent = currentRoom;
-  addTile(myPeerId, myName, localStream, true);
+  // 自分の映像タイル（peerId とは独立した固定 ID "self" を使用）
+  addTile("self", myName, localStream, true);
   updateGridCount();
 }
 
@@ -96,7 +109,7 @@ function connectSignaling() {
   const proto = location.protocol === "https:" ? "wss" : "ws";
   const url = `${proto}://${location.host}/ws?room=${encodeURIComponent(
     currentRoom
-  )}&peer=${encodeURIComponent(myPeerId)}&name=${encodeURIComponent(myName)}`;
+  )}&name=${encodeURIComponent(myName)}`;
   ws = new WebSocket(url);
 
   ws.addEventListener("open", () => setStatus("接続済み"));
@@ -118,12 +131,19 @@ function signalSend(msg) {
 // ---- シグナリング受信 ----
 async function handleSignal(msg) {
   switch (msg.type) {
-    case "peers":
+    case "welcome":
+      // サーバーが発行した自分の peerId を受け取る
+      myPeerId = msg.peerId;
       // 自分は新規参加者。既存ピア全員へこちらから offer を送る（衝突回避）
       for (const p of msg.peers) {
         await createPeer(p.peerId, p.name, true);
       }
       updateStatusCount();
+      break;
+
+    case "room-full":
+      // 満室：通話画面を閉じ、ロビーでエラー表示
+      leaveCall(`このルームは満室です（最大 ${msg.max} 人）。`);
       break;
 
     case "peer-joined":
@@ -332,7 +352,8 @@ camBtn.addEventListener("click", () => {
 
 leaveBtn.addEventListener("click", () => leaveCall());
 
-function leaveCall() {
+// 通話を終了してロビーへ戻す。errorMessage を渡すとロビーにエラー表示する。
+function leaveCall(errorMessage) {
   if (ws) {
     try {
       ws.close();
@@ -351,8 +372,18 @@ function leaveCall() {
     localStream.getTracks().forEach((t) => t.stop());
     localStream = null;
   }
-  // ロビーへ戻す（再読み込みでクリーンな状態に）
-  location.reload();
+
+  if (errorMessage) {
+    // ロビーへ戻してエラーを表示（満室など）
+    grid.innerHTML = "";
+    call.hidden = true;
+    lobby.hidden = false;
+    resetJoinBtn();
+    showLobbyError(errorMessage);
+  } else {
+    // 通常の退室は再読み込みでクリーンな状態に
+    location.reload();
+  }
 }
 
 // ページを閉じる際に通知
