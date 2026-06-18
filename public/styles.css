@@ -117,6 +117,34 @@ body {
   box-shadow: 0 0 0 3px rgba(227, 6, 19, 0.18);
 }
 
+/* 合言葉入力 + 生成ボタンの横並び */
+.room-row {
+  display: flex;
+  gap: 8px;
+}
+.room-row input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.ghost-btn {
+  flex: 0 0 auto;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--red-bright);
+  background: transparent;
+  border: 1px solid var(--red);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+.ghost-btn:hover {
+  background: rgba(227, 6, 19, 0.12);
+  box-shadow: 0 0 16px var(--red-glow);
+}
+
 .primary-btn {
   width: 100%;
   margin-top: 6px;
